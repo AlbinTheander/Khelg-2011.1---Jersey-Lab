@@ -9,8 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.api.view.Viewable;
+import javax.ws.rs.core.Response;
 
 @Path("/books")
 public class Books {
@@ -24,15 +23,22 @@ public class Books {
 		books.add(new Book("Groda", "grodans bok", "12643"));
 		return books;
 	}
-	
 
 	@GET
 	@Path("/{bookId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Viewable getBook(@PathParam("bookId") String id) {
-		return new Viewable("/book1.json");
+	public Response getBook(@PathParam("bookId") String id) {
+		if (id.startsWith("999")) {
+			return Response
+					.status(503)
+					.entity("Id was 999... simulating service unavailable")
+					.build();
+		}
+		return Response
+					.ok(new Book("Bo Ek", "Book of Bo", id))
+					.build();
 	}
-	
+
 	@GET
 	@Path("/search")
 	@Produces(MediaType.TEXT_PLAIN)
